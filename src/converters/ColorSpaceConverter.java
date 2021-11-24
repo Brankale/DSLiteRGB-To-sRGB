@@ -11,8 +11,6 @@ import java.util.HashMap;
 
 public class ColorSpaceConverter {
 
-    private final HashMap<Color, Color> cache = new HashMap<>();
-
     private final ColorSpace sourceCS;
     private final ColorSpace destCS;
     private final SimpleMatrix srcColorCorrectionMtx;
@@ -47,12 +45,11 @@ public class ColorSpaceConverter {
      * @return the color in the destination colorspace
      */
     public Color convert(Color color) {
-        try {
-            // if color is already in cache
-            Color c = cache.get(color);
-            if (c != null)
-                return c;
 
+        // TODO: implement a cache for colors that works with
+        //       changes on-the-fly like gamma correction
+
+        try {
             SimpleMatrix normalizedRGB = normalization(color);
             SimpleMatrix linearizedRGB = linearization(sourceCS, normalizedRGB);
             SimpleMatrix XYZ = RGBToXYZ(srcColorCorrectionMtx, linearizedRGB);
@@ -69,7 +66,6 @@ public class ColorSpaceConverter {
             SimpleMatrix delinearizedRGB = delinearization(destCS, srgb);
             Color convertedColor = denormalization(delinearizedRGB);
 
-            cache.put(color, convertedColor);
             return convertedColor;
 
         } catch (IllegalArgumentException e) {
