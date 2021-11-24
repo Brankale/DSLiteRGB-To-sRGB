@@ -4,6 +4,10 @@ import coordinates.data_types.CIExyY;
 
 public class DSLite extends ColorSpace {
 
+    public static double GAMMA_RED = 1.85;
+    public static double GAMMA_GREEN = 1.85;
+    public static double GAMMA_BLUE = 1.85;
+
     public DSLite() {
         super(
                 new CIExyY(0.6068, 0.3449, 1.0),
@@ -24,7 +28,12 @@ public class DSLite extends ColorSpace {
     }
 
     private double getGamma(double value, Channel channel) {
-        return getGreyScaleGamma(value);
+        switch (channel) {
+            case RED: return GAMMA_RED;
+            case GREEN: return GAMMA_GREEN;
+            case BLUE: return GAMMA_BLUE;
+            default: return getGreyScaleGamma(value);
+        }
     }
 
     private double getGreyScaleGamma(double value) {
