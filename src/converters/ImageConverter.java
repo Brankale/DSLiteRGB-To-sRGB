@@ -13,10 +13,10 @@ public class ImageConverter {
 
     public static BufferedImage convert(BufferedImage buf, ColorSpace src, ColorSpace dest) {
         ColorSpaceConverter csConverter = new ColorSpaceConverter(src, dest);
-        return convertPixels(buf, csConverter);
+        return convert(buf, csConverter);
     }
 
-    private static BufferedImage convertPixels(BufferedImage buf, ColorSpaceConverter csConverter) {
+    public static BufferedImage convert(BufferedImage buf, ColorSpaceConverter csConverter) {
         for (int height = 0; height < buf.getHeight(); ++height) {
             for (int width = 0; width < buf.getWidth(); ++width) {
                 Color color = new Color(buf.getRGB(width, height));
