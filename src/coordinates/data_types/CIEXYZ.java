@@ -9,13 +9,6 @@ public class CIEXYZ implements ChromaticityCoord {
     public final double Z;
 
     public CIEXYZ(double X, double Y, double Z) {
-        if (X < 0.0 || 0.95047 < X)
-            throw new IllegalArgumentException("CIEXYZ: X = " + X + " is out of range ");
-        if (Y < 0.0 || 1.0 < Y)
-            throw new IllegalArgumentException("CIEXYZ: Y = " + Y + " is out of range ");
-        if (Z < 0.0 || 1.08883 < Z)
-            throw new IllegalArgumentException("CIEXYZ: Z = " + Z + " is out of range ");
-
         this.X = X;
         this.Y = Y;
         this.Z = Z;
@@ -27,23 +20,6 @@ public class CIEXYZ implements ChromaticityCoord {
                 sm.get(1, 0),
                 sm.get(2, 0)
         );
-    }
-
-    public boolean isInvalid() {
-        if (X < 0.0 || 0.95047 < X)
-            return true;
-        if (Y < 0.0 || 1.0 < Y)
-            return true;
-        if (Z < 0.0 || 1.08883 < Z)
-            return true;
-        return false;
-    }
-
-    public CIEXYZ adjustValues() {
-        double X = ChromaticityCoord.valueInRange(this.X, 0.0, 0.95047);
-        double Y = ChromaticityCoord.valueInRange(this.Y, 0.0, 1.0);
-        double Z = ChromaticityCoord.valueInRange(this.Z, 0.0, 1.08883);
-        return new CIEXYZ(X, Y, Z);
     }
 
     @Override

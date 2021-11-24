@@ -63,7 +63,7 @@ public class ColorSpaceConverter {
 
             // even if chromatic adaptation is performed there are still some edge cases
             // that can be out of range for a very small error
-            XYZ = CIEXYZ.fromSimpleMatrix(XYZ).adjustValues().toSimpleMatrix();
+            XYZ = CIEXYZ.fromSimpleMatrix(XYZ).toSimpleMatrix();
 
             SimpleMatrix srgb = XYZToRGB(destColorCorrectionMtx, XYZ);
             SimpleMatrix delinearizedRGB = delinearization(destCS, srgb);
