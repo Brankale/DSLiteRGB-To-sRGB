@@ -2,6 +2,8 @@ package colorspaces;
 
 import coordinates.data_types.CIExyY;
 
+import java.awt.*;
+
 public abstract class ColorSpace {
 
     public enum Channel {
@@ -16,6 +18,9 @@ public abstract class ColorSpace {
         this.b = b;
         this.w = w;
     }
+
+    public Color beforeConversionTo(Color color) { return color; }
+    public Color afterConversionFrom(Color color) { return color; }
 
     public abstract double inverseCompanding(double value, Channel channel);
     public abstract double companding(double value, Channel channel);

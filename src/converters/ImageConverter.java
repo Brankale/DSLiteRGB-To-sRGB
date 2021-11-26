@@ -20,16 +20,6 @@ public class ImageConverter {
         for (int height = 0; height < buf.getHeight(); ++height) {
             for (int width = 0; width < buf.getWidth(); ++width) {
                 Color color = new Color(buf.getRGB(width, height));
-
-                // TODO: DS Lite display has 6bit per channel so I approximate the color here.
-                //       Since the starting colorspace is not necessarily DSL you MUST put this
-                //       thing somewhere else.
-                color = new Color(
-                        color.getRed() & 0xFC,
-                        color.getGreen() & 0xFC,
-                        color.getBlue() & 0xFC
-                );
-
                 try {
                     Color convertedColor = csConverter.convert(color);
                     buf.setRGB(width, height, convertedColor.getRGB());

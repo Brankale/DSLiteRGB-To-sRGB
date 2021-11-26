@@ -2,6 +2,8 @@ package colorspaces;
 
 import coordinates.data_types.CIExyY;
 
+import java.awt.*;
+
 public class DSLite extends ColorSpace {
 
     public static double GAMMA_RED = 1.85;
@@ -14,6 +16,26 @@ public class DSLite extends ColorSpace {
                 new CIExyY(0.3314, 0.6124, 1.0),
                 new CIExyY(0.1451, 0.0893, 1.0),
                 new CIExyY(0.3093, 0.3193, 1.0)
+        );
+    }
+
+    @Override
+    public Color beforeConversionTo(Color color) {
+        // DS Lite has a 6bit per channel display
+        return new Color(
+                color.getRed() & 0xFC,
+                color.getGreen() & 0xFC,
+                color.getBlue() & 0xFC
+        );
+    }
+
+    @Override
+    public Color afterConversionFrom(Color color) {
+        // DS Lite has a 6bit per channel display
+        return new Color(
+                color.getRed() & 0xFC,
+                color.getGreen() & 0xFC,
+                color.getBlue() & 0xFC
         );
     }
 

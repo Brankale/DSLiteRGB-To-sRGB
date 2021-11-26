@@ -50,6 +50,8 @@ public class ColorSpaceConverter {
         //       changes on-the-fly like gamma correction
 
         try {
+            color = sourceCS.beforeConversionTo(color);
+
             SimpleMatrix normalizedRGB = normalization(color);
             SimpleMatrix linearizedRGB = linearization(sourceCS, normalizedRGB);
             SimpleMatrix XYZ = RGBToXYZ(srcColorCorrectionMtx, linearizedRGB);
@@ -65,6 +67,8 @@ public class ColorSpaceConverter {
             SimpleMatrix srgb = XYZToRGB(destColorCorrectionMtx, XYZ);
             SimpleMatrix delinearizedRGB = delinearization(destCS, srgb);
             Color convertedColor = denormalization(delinearizedRGB);
+
+            convertedColor = destCS.afterConversionFrom(convertedColor);
 
             return convertedColor;
 
