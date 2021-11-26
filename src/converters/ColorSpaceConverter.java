@@ -38,6 +38,18 @@ public class ColorSpaceConverter {
         );
     }
 
+    public SimpleMatrix getSrcColorCorrectionMtx() {
+        return srcColorCorrectionMtx;
+    }
+
+    public SimpleMatrix getDestColorCorrectionMtx() {
+        return destColorCorrectionMtx;
+    }
+
+    public SimpleMatrix getChromaticAdaptationMtx() {
+        return chromaticAdaptationMtx;
+    }
+
     /**
      * @param color the color to convert to another colorspace
      * @throws OutsideGamutException if the converted color is outside the destination colorspace gamut
@@ -50,31 +62,32 @@ public class ColorSpaceConverter {
         //       changes on-the-fly like gamma correction
 
         try {
-            color = sourceCS.beforeConversionTo(color);
-
-            SimpleMatrix normalizedRGB = normalization(color);
-            SimpleMatrix linearizedRGB = linearization(sourceCS, normalizedRGB);
-            SimpleMatrix XYZ = RGBToXYZ(srcColorCorrectionMtx, linearizedRGB);
+            SimpleMatrix XYZ = toCIEXYZ(color);
 
             // if you perform conversion without chromatic adaptation,
             // XYZ values will be in a lot of cases out of range.
             XYZ = chromaticAdaptation(chromaticAdaptationMtx, XYZ);
 
-            // even if chromatic adaptation is performed there are still some edge cases
-            // that can be out of range for a very small error
-            XYZ = CIEXYZ.fromSimpleMatrix(XYZ).toSimpleMatrix();
-
-            SimpleMatrix srgb = XYZToRGB(destColorCorrectionMtx, XYZ);
-            SimpleMatrix delinearizedRGB = delinearization(destCS, srgb);
-            Color convertedColor = denormalization(delinearizedRGB);
-
-            convertedColor = destCS.afterConversionFrom(convertedColor);
-
-            return convertedColor;
+            return fromCIEXYZ(XYZ);
 
         } catch (IllegalArgumentException e) {
             throw new OutsideGamutException();
         }
+    }
+
+    public SimpleMatrix toCIEXYZ(Color color) {
+        color = sourceCS.beforeConversionTo(color);
+        SimpleMatrix normalizedRGB = normalization(color);
+        SimpleMatrix linearizedRGB = linearization(sourceCS, normalizedRGB);
+        return RGBToXYZ(srcColorCorrectionMtx, linearizedRGB);
+    }
+
+    public Color fromCIEXYZ(SimpleMatrix XYZ) {
+        SimpleMatrix srgb = XYZToRGB(destColorCorrectionMtx, XYZ);
+        SimpleMatrix delinearizedRGB = delinearization(destCS, srgb);
+        Color convertedColor = denormalization(delinearizedRGB);
+        convertedColor = destCS.afterConversionFrom(convertedColor);
+        return convertedColor;
     }
 
     public static SimpleMatrix normalization(Color color) {

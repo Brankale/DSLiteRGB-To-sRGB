@@ -2,6 +2,8 @@ package coordinates.data_types;
 
 import org.ejml.simple.SimpleMatrix;
 
+import java.util.Objects;
+
 public class CIExyY implements ChromaticityCoord {
 
     public final double x;
@@ -47,4 +49,25 @@ public class CIExyY implements ChromaticityCoord {
         });
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CIExyY ciExyY = (CIExyY) o;
+        return Double.compare(ciExyY.x, x) == 0 && Double.compare(ciExyY.y, y) == 0 && Double.compare(ciExyY.Y, Y) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, Y);
+    }
+
+    @Override
+    public String toString() {
+        return "CIExyY{" +
+                "x=" + x +
+                ", y=" + y +
+                ", Y=" + Y +
+                '}';
+    }
 }

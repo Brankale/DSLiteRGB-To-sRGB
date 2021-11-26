@@ -6,10 +6,10 @@ import java.awt.*;
 
 public class DSLite extends ColorSpace {
 
-    public static CIExyY RED = new CIExyY(0.6068, 0.3449, 1.0);
-    public static CIExyY GREEN = new CIExyY(0.3314, 0.6124, 1.0);
-    public static CIExyY BLUE = new CIExyY(0.1451, 0.0893, 1.0);
-    public static CIExyY WHITE = new CIExyY(0.3093, 0.3193, 1.0);
+    private final static CIExyY RED = new CIExyY(0.6068, 0.3449, 1.0);
+    private final static CIExyY GREEN = new CIExyY(0.3314, 0.6124, 1.0);
+    private final static CIExyY BLUE = new CIExyY(0.1451, 0.0893, 1.0);
+    private final static CIExyY WHITE = new CIExyY(0.3093, 0.3193, 1.0);
 
 
     public static double GAMMA_RED = 1.85;
