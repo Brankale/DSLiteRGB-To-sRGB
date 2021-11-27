@@ -50,6 +50,13 @@ public class ColorSpaceConverterTest {
     }
 
     @Test
+    public void sRgbRedShouldBeOutsideDslGamut() {
+        assertThrows(OutsideGamutException.class, () -> {
+            sRgbToDslConverter.convert(Color.RED);
+        });
+    }
+
+    @Test
     public void dslRedShouldBeConvertedToItsChromaticityValue() {
         SimpleMatrix XYZ = dslToSRgbConverter.toCIEXYZ(Color.RED);
         CIEXYZ ciexyz = CIEXYZ.fromSimpleMatrix(XYZ);
