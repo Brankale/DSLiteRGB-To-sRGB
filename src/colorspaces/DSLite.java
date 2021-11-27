@@ -12,9 +12,10 @@ public class DSLite extends ColorSpace {
     private final static CIExyY WHITE = new CIExyY(0.3093, 0.3193, 1.0);
 
 
-    public static double GAMMA_RED = 1.85;
-    public static double GAMMA_GREEN = 1.85;
-    public static double GAMMA_BLUE = 1.85;
+    public static double OFFSET = 0.0;
+    public static double GAMMA_R = 1.85 + OFFSET;   // <-- red : blue -->
+    public static double GAMMA_G = 1.85 + OFFSET;   // <-- green : red -->
+    public static double GAMMA_B = 1.85 + OFFSET;   // <-- blue : green -->
 
     public DSLite() {
         super(RED, GREEN, BLUE, WHITE);
@@ -22,17 +23,18 @@ public class DSLite extends ColorSpace {
 
     @Override
     public Color beforeConversionTo(Color color) {
-        // DS Lite has a 6bit per channel display
-        return new Color(
-                color.getRed() & 0xFC,
-                color.getGreen() & 0xFC,
-                color.getBlue() & 0xFC
-        );
+        return to6bit(color);
     }
 
     @Override
     public Color afterConversionFrom(Color color) {
-        // DS Lite has a 6bit per channel display
+        return to6bit(color);
+    }
+
+    /**
+     * DS Lite screen can display just 6bit per channel
+     */
+    private Color to6bit(Color color) {
         return new Color(
                 color.getRed() & 0xFC,
                 color.getGreen() & 0xFC,
@@ -52,9 +54,9 @@ public class DSLite extends ColorSpace {
 
     private double getGamma(double value, Channel channel) {
         switch (channel) {
-            case RED: return GAMMA_RED;
-            case GREEN: return GAMMA_GREEN;
-            case BLUE: return GAMMA_BLUE;
+            case RED: return GAMMA_R;
+            case GREEN: return GAMMA_G;
+            case BLUE: return GAMMA_B;
             default: return getGreyScaleGamma(value);
         }
     }

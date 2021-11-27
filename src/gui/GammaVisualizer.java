@@ -53,17 +53,17 @@ public class GammaVisualizer extends JFrame {
 
         gammaRed.addChangeListener(e -> {
             int newValue = gammaRed.getValue();
-            DSLite.GAMMA_RED = newValue / 100.0;
+            DSLite.GAMMA_R = newValue / 100.0;
             updateImage();
         });
         gammaGreen.addChangeListener(e -> {
             int newValue = gammaGreen.getValue();
-            DSLite.GAMMA_GREEN = newValue / 100.0;
+            DSLite.GAMMA_G = newValue / 100.0;
             updateImage();
         });
         gammaBlue.addChangeListener(e -> {
             int newValue = gammaBlue.getValue();
-            DSLite.GAMMA_BLUE = newValue / 100.0;
+            DSLite.GAMMA_B = newValue / 100.0;
             updateImage();
         });
 
