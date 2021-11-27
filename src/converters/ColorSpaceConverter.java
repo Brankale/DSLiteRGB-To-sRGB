@@ -63,13 +63,12 @@ public class ColorSpaceConverter {
 
         try {
             SimpleMatrix XYZ = toCIEXYZ(color);
-
-            // if you perform conversion without chromatic adaptation,
-            // XYZ values will be in a lot of cases out of range.
             XYZ = chromaticAdaptation(chromaticAdaptationMtx, XYZ);
 
+            // throw OutsideGamutException if needed
             return fromCIEXYZ(XYZ);
-
+            // clip colors not to throw OutsideGamutException
+//            return fromCIEXYZWithClipping(XYZ);
         } catch (IllegalArgumentException e) {
             throw new OutsideGamutException();
         }
@@ -86,6 +85,14 @@ public class ColorSpaceConverter {
         SimpleMatrix srgb = XYZToRGB(destColorCorrectionMtx, XYZ);
         SimpleMatrix delinearizedRGB = delinearization(destCS, srgb);
         Color convertedColor = denormalization(delinearizedRGB);
+        convertedColor = destCS.afterConversionFrom(convertedColor);
+        return convertedColor;
+    }
+
+    public Color fromCIEXYZWithClipping(SimpleMatrix XYZ) {
+        SimpleMatrix srgb = XYZToRGB(destColorCorrectionMtx, XYZ);
+        SimpleMatrix delinearizedRGB = delinearization(destCS, srgb);
+        Color convertedColor = denormalizationWithClipping(delinearizedRGB);
         convertedColor = destCS.afterConversionFrom(convertedColor);
         return convertedColor;
     }
@@ -137,12 +144,24 @@ public class ColorSpaceConverter {
         );
     }
 
+    public static Color denormalizationWithClipping(SimpleMatrix delinearizedRGB) {
+        return new Color(
+                clip(denormalize(delinearizedRGB.get(0, 0))),
+                clip(denormalize(delinearizedRGB.get(1, 0))),
+                clip(denormalize(delinearizedRGB.get(2, 0)))
+        );
+    }
+
     public static double normalize(int value) {
         return value / 255.0;
     }
 
     public static int denormalize(double value) {
         return (int) (value * 255.0);
+    }
+
+    public static int clip(double value) {
+        return Math.max(0, Math.min((int) value, 255));
     }
 
 }
