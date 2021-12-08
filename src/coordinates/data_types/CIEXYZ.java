@@ -45,28 +45,28 @@ public class CIEXYZ implements ChromaticityCoord {
         double fx, fy, fz;
 
         if (xw > CIELab.e) {
-            fx = Math.pow(xw, 1.0 / 3.0);
+            fx = Math.cbrt(xw);
         } else {
-            fx = (CIELab.k * xw + 16) / 116;
+            fx = (CIELab.k * xw + 16) / 116.0;
         }
 
         if (yw > CIELab.e) {
-            fy = Math.pow(xw, 1.0 / 3.0);
+            fy = Math.cbrt(yw);
         } else {
-            fy = (CIELab.k * xw + 16) / 116;
+            fy = (CIELab.k * yw + 16) / 116.0;
         }
 
         if (zw > CIELab.e) {
-            fz = Math.pow(xw, 1.0 / 3.0);
+            fz = Math.cbrt(zw);
         } else {
-            fz = (CIELab.k * xw + 16) / 116;
+            fz = (CIELab.k * zw + 16) / 116.0;
         }
 
         double L = 116 * fy - 16;
         double a = 500 * (fx - fy);
         double b = 200 * (fy - fz);
 
-        return new CIELab(L, a, b);
+        return new CIELab(L, a, b, white);
     }
 
     @Override
