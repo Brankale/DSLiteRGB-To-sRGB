@@ -20,6 +20,11 @@ public class ColorSpaceConverterTest {
     public static ColorSpaceConverter dslToSRgbConverter = new ColorSpaceConverter(dsLite, srgb);
     public static ColorSpaceConverter sRgbToDslConverter = new ColorSpaceConverter(srgb, dsLite);
 
+    @Test
+    public void dslBlackShouldBeEqualToSRgbBlack() {
+        assertEquals(Color.BLACK, dslToSRgbConverter.convert(Color.BLACK));
+    }
+
     /**
      * xy coords are inside sRGB gamut but Y should
      * also be considered, but it's unknown
