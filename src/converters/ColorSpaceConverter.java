@@ -3,11 +3,9 @@ package converters;
 import colorspaces.ColorSpace;
 import colorspaces.utils.ChromaticAdaptation;
 import colorspaces.utils.ColorCorrection;
-import coordinates.data_types.CIEXYZ;
 import org.ejml.simple.SimpleMatrix;
 
 import java.awt.*;
-import java.util.HashMap;
 
 public class ColorSpaceConverter {
 
@@ -63,12 +61,9 @@ public class ColorSpaceConverter {
 
         try {
             SimpleMatrix XYZ = toCIEXYZ(color);
-            XYZ = chromaticAdaptation(chromaticAdaptationMtx, XYZ);
-
-            // throw OutsideGamutException if needed
-            return fromCIEXYZ(XYZ);
-            // clip colors not to throw OutsideGamutException
-//            return fromCIEXYZWithClipping(XYZ);
+//            XYZ = chromaticAdaptation(chromaticAdaptationMtx, XYZ);
+//            return fromCIEXYZ(XYZ);                 // throw OutsideGamutException if needed
+            return fromCIEXYZWithClipping(XYZ);     // clip colors not to throw OutsideGamutException
         } catch (IllegalArgumentException e) {
             throw new OutsideGamutException();
         }
@@ -120,6 +115,13 @@ public class ColorSpaceConverter {
         return ccm.mult(linearizedRGB);
     }
 
+    /**
+     * Performing a Chromatic Adaptation step means that the output colors are less accurate
+     * but the final image should look equal to the original due to how eyes perceives different
+     * white points.
+     *
+     * NB: If you want to perform accurate measurements, you MUSTN'T do this step!
+     */
     public static SimpleMatrix chromaticAdaptation(SimpleMatrix cam, SimpleMatrix XYZ) {
         return cam.mult(XYZ);
     }
