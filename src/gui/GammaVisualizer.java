@@ -22,7 +22,7 @@ public class GammaVisualizer extends JFrame {
             "C:\\xampp\\htdocs\\ds\\imgs\\prev\\img2.png";
 
     private static final ColorSpaceConverter converter =
-            new ColorSpaceConverter(new DSLite(), new SRGB());
+            new ColorSpaceConverter(new DSLite(), new SRGB(), true);
 
     private BufferedImage bufferedImage;
 

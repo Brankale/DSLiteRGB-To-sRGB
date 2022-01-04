@@ -84,7 +84,7 @@ public class InGamutColorGenerator {
     }
 
     public static Color generateInGamutColor(ColorSpace source, ColorSpace dest) {
-        ColorSpaceConverter cs = new ColorSpaceConverter(source, dest);
+        ColorSpaceConverter cs = new ColorSpaceConverter(source, dest, false);
 
         while (true) {
             try {

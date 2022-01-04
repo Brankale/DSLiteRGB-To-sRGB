@@ -14,10 +14,12 @@ public class ColorSpaceConverter {
     private final SimpleMatrix srcColorCorrectionMtx;
     private final SimpleMatrix destColorCorrectionMtx;
     private final SimpleMatrix chromaticAdaptationMtx;
+    private final boolean clipColors;
 
-    public ColorSpaceConverter(ColorSpace sourceCS, ColorSpace destCS) {
+    public ColorSpaceConverter(ColorSpace sourceCS, ColorSpace destCS, boolean clipColors) {
         this.sourceCS = sourceCS;
         this.destCS = destCS;
+        this.clipColors = clipColors;
         srcColorCorrectionMtx = createColorCorrectionMtx(sourceCS);
         destColorCorrectionMtx = createColorCorrectionMtx(destCS);
         chromaticAdaptationMtx = createChromaticAdaptationMtx(sourceCS, destCS);
@@ -62,8 +64,7 @@ public class ColorSpaceConverter {
         try {
             SimpleMatrix XYZ = toCIEXYZ(color);
 //            XYZ = chromaticAdaptation(chromaticAdaptationMtx, XYZ);
-//            return fromCIEXYZ(XYZ);                 // throw OutsideGamutException if needed
-            return fromCIEXYZWithClipping(XYZ);     // clip colors not to throw OutsideGamutException
+            return fromCIEXYZ(XYZ, clipColors);
         } catch (IllegalArgumentException e) {
             throw new OutsideGamutException();
         }
@@ -76,19 +77,29 @@ public class ColorSpaceConverter {
         return RGBToXYZ(srcColorCorrectionMtx, linearizedRGB);
     }
 
-    public Color fromCIEXYZ(SimpleMatrix XYZ) {
+    public Color fromCIEXYZ(SimpleMatrix XYZ, boolean clip) {
         SimpleMatrix srgb = XYZToRGB(destColorCorrectionMtx, XYZ);
         SimpleMatrix delinearizedRGB = delinearization(destCS, srgb);
-        Color convertedColor = denormalization(delinearizedRGB);
-        convertedColor = destCS.afterConversionFrom(convertedColor);
-        return convertedColor;
-    }
+        SimpleMatrix denormalizedRGB = denormalization(delinearizedRGB);
 
-    public Color fromCIEXYZWithClipping(SimpleMatrix XYZ) {
-        SimpleMatrix srgb = XYZToRGB(destColorCorrectionMtx, XYZ);
-        SimpleMatrix delinearizedRGB = delinearization(destCS, srgb);
-        Color convertedColor = denormalizationWithClipping(delinearizedRGB);
+        Color convertedColor;
+
+        if (clip) {
+            convertedColor = new Color(
+                    clip((int) denormalizedRGB.get(0, 0)),
+                    clip((int) denormalizedRGB.get(1, 0)),
+                    clip((int) denormalizedRGB.get(2, 0))
+            );
+        } else {
+            convertedColor = new Color(
+                    (int) denormalizedRGB.get(0, 0),
+                    (int) denormalizedRGB.get(1, 0),
+                    (int) denormalizedRGB.get(2, 0)
+            );
+        }
+
         convertedColor = destCS.afterConversionFrom(convertedColor);
+
         return convertedColor;
     }
 
@@ -138,28 +149,20 @@ public class ColorSpaceConverter {
         });
     }
 
-    public static Color denormalization(SimpleMatrix delinearizedRGB) {
-        return new Color(
+    public static SimpleMatrix denormalization(SimpleMatrix delinearizedRGB) {
+        return new SimpleMatrix(3, 1, true, new double[] {
                 denormalize(delinearizedRGB.get(0, 0)),
                 denormalize(delinearizedRGB.get(1, 0)),
                 denormalize(delinearizedRGB.get(2, 0))
-        );
-    }
-
-    public static Color denormalizationWithClipping(SimpleMatrix delinearizedRGB) {
-        return new Color(
-                clip(denormalize(delinearizedRGB.get(0, 0))),
-                clip(denormalize(delinearizedRGB.get(1, 0))),
-                clip(denormalize(delinearizedRGB.get(2, 0)))
-        );
+        });
     }
 
     public static double normalize(int value) {
         return value / 255.0;
     }
 
-    public static int denormalize(double value) {
-        return (int) (value * 255.0);
+    public static double denormalize(double value) {
+        return value * 255.0;
     }
 
     public static int clip(double value) {

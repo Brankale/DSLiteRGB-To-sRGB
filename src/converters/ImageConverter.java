@@ -12,7 +12,7 @@ public class ImageConverter {
     }
 
     public static BufferedImage convert(BufferedImage buf, ColorSpace src, ColorSpace dest) {
-        ColorSpaceConverter csConverter = new ColorSpaceConverter(src, dest);
+        ColorSpaceConverter csConverter = new ColorSpaceConverter(src, dest, true);
         return convert(buf, csConverter);
     }
 
