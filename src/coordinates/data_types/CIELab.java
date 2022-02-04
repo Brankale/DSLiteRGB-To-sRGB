@@ -73,4 +73,13 @@ public class CIELab implements ChromaticityCoord {
         throw new UnsupportedOperationException("not yet implemented");
     }
 
+    @Override
+    public String toString() {
+        return "CIELab{" +
+                "L=" + L +
+                ", a=" + a +
+                ", b=" + b +
+                ", white=" + white +
+                '}';
+    }
 }
