@@ -10,15 +10,6 @@ import org.ejml.simple.SimpleMatrix;
 
 import java.awt.*;
 
-/**
- * Questo programma serve a calcolare il delta E 2000
- *
- * Scelto il canale R, G o B applica due gamme diverse
- * allo spazio colore del DSLite e stampa dei valori inseribili
- * in visualizzatori come Desmos e Geogebra per vedere quanto cambia
- * applicando due gamme differenti
- */
-
 public class DeltaEChanges {
 
     enum Channel {
