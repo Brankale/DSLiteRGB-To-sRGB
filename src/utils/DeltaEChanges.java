@@ -17,7 +17,7 @@ public class DeltaEChanges {
     }
 
     public static void main(String[] args) {
-        drawDeltaEGraph(Channel.RED, 1.0, 2.2);
+        drawDeltaEGraph(Channel.GREEN, 1.65, 1.8);
     }
 
     /**
@@ -32,8 +32,8 @@ public class DeltaEChanges {
         DSLite dsLite = new DSLite();
         ColorSpaceConverter csc = new ColorSpaceConverter(dsLite, srgb, false);
 
-        CIEXYZ[] xyz1 = getCIEXYZValues(csc, channel, 1.0);
-        CIEXYZ[] xyz2 = getCIEXYZValues(csc, channel, 1.2);
+        CIEXYZ[] xyz1 = getCIEXYZValues(csc, channel, gamma1);
+        CIEXYZ[] xyz2 = getCIEXYZValues(csc, channel, gamma2);
 
         CIELab[] lab1 = new CIELab[64];
         CIELab[] lab2 = new CIELab[64];
@@ -60,12 +60,12 @@ public class DeltaEChanges {
         CIEXYZ[] xyz = new CIEXYZ[64];
         DSLite.GAMMA = gamma;
 
-        for (int i = 0; i < 256; i += 4) {
+        for (int i = 0; i < 64; ++i) {
             SimpleMatrix m;
             switch (channel) {
-                case RED:   m = csc.toCIEXYZ(new Color(i, 0, 0)); break;
-                case GREEN: m = csc.toCIEXYZ(new Color(0, i, 0)); break;
-                case BLUE:  m = csc.toCIEXYZ(new Color(0, 0, i)); break;
+                case RED:   m = csc.toCIEXYZ(new Color(i * 4, 0, 0)); break;
+                case GREEN: m = csc.toCIEXYZ(new Color(0, i * 4, 0)); break;
+                case BLUE:  m = csc.toCIEXYZ(new Color(0, 0, i * 4)); break;
                 default: throw new IllegalArgumentException();
             }
             xyz[i] = CIEXYZ.fromSimpleMatrix(m);
